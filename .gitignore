@@ -8,8 +8,10 @@
 # Docker settings files except xdebug log
 !docker/
 !docker/*
-docker/xdebug.log
-docker/wp-debug.log
+
+# Logs
+!logs/
+!logs/*
 
 # Main folder settings files
 !.env.example

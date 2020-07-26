@@ -37,8 +37,8 @@ services:
       - "9123:9123"
     volumes:
       - ./docker/php.ini:/usr/local/etc/php/conf.d/user-defaults.ini:ro
-      - ./docker/xdebug.log:/usr/local/etc/php/xdebug.log
-      - ./docker/wp-debug.log:/var/www/html/wp-content/debug.log
+      - ./docker/logs/xdebug.log:/usr/local/etc/php/xdebug.log
+      - ./docker/logs/wp-debug.log:/var/www/html/wp-content/debug.log
       - ./wordpress:/var/www/html
     restart: unless-stopped
     environment:
