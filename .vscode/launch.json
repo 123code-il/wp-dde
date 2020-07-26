@@ -1,0 +1,16 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Xdebug for Docker",
+      "type": "php",
+      "request": "launch",
+      "port": 9123,
+      "pathMappings": {
+        "/var/www/html/": "${workspaceFolder}/wordpress"
+      },
+      "log": true,
+      "externalConsole": false
+    }
+  ]
+}

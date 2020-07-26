@@ -1,0 +1,17 @@
+# Ignore everything but...
+*
+
+# VS Code settings
+!.vscode
+!.vscode/*
+
+# Docker settings files except xdebug log
+!docker/
+!docker/*
+docker/xdebug.log
+docker/wp-debug.log
+
+# Main folder settings files
+!.env.example
+!.gitignore
+!docker-compose.yml

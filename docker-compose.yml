@@ -1,0 +1,102 @@
+version: '3.8'
+
+networks:
+  wp_website:
+volumes:
+  database_data:
+
+services:
+  database:
+    container_name: wp_db
+    image: mysql:5.7.29
+    command:
+      - "--character-set-server=utf8"
+      - "--collation-server=utf8_unicode_ci"
+    volumes:
+      - database_data:/var/lib/mysql
+    restart: unless-stopped
+    expose:
+      - 3306
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    networks:
+      - wp_website
+
+  wordpress:
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile
+    container_name: wp_web
+    depends_on:
+      - database
+    ports:
+      - "80:80"
+      - "9123:9123"
+    volumes:
+      - ./docker/php.ini:/usr/local/etc/php/conf.d/user-defaults.ini:ro
+      - ./docker/xdebug.log:/usr/local/etc/php/xdebug.log
+      - ./docker/wp-debug.log:/var/www/html/wp-content/debug.log
+      - ./wordpress:/var/www/html
+    restart: unless-stopped
+    environment:
+      WORDPRESS_DB_HOST: ${WORDPRESS_DB_HOST}
+      WORDPRESS_DB_USER: ${WORDPRESS_DB_USER}
+      WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD}
+      WORDPRESS_DB_NAME: ${WORDPRESS_DB_NAME}
+      WORDPRESS_DEBUG: ${WORDPRESS_DEBUG}
+    networks:
+      - wp_website
+
+  cli:
+    container_name: wp_cli
+    image: wordpress:cli
+    depends_on:
+      - wordpress
+    volumes:
+      - ./wordpress:/var/www/html
+    restart: unless-stopped
+    networks:
+      - wp_website
+    command: ["sh", "-c", "wp core install \
+      --url=\"${WORDPRESS_URL}\" \
+      --title=\"${WORDPRESS_TITLE}\" \
+      --admin_user=\"${WORDPRESS_USER}\" \
+      --admin_password=\"${WORDPRESS_PASSWORD}\" \
+      --admin_email=\"${WORDPRESS_EMAIL}\""
+    ]
+
+  # phpmyadmin:
+  #   container_name: wp_pma
+  #   image: phpmyadmin/phpmyadmin
+  #   depends_on:
+  #     - database
+  #   restart: unless-stopped
+  #   ports:
+  #     - "4321:80"
+  #   environment:
+  #     PMA_HOST: ${PMA_HOST}
+  #     PMA_USER: ${PMA_USER}
+  #     PMA_PASSWORD: ${PMA_PASSWORD}
+  #     MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+  #   networks:
+  #     - wp_website
+
+  # wordmove:
+  #   container_name: wp_move
+  #   image: welaika/wordmove
+  #   restart: unless-stopped
+  #   tty: true
+  #   depends_on:
+  #     - wordpress
+  #     - database
+  #   volumes:
+  #     - ./docker/.lftprc:/root/.lftprc:ro
+  #     - ./movefile.yml:/html/movefile.yml:ro
+  #     - ./wordpress:/html/wordpress
+  #   environment:
+  #     LANG: C.UTF-8
+  #   networks:
+  #     - wp_website
