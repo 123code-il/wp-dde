@@ -15,6 +15,8 @@ services:
     volumes:
       - database_data:/var/lib/mysql
     restart: unless-stopped
+    ports:
+      - '4321:3306'
     expose:
       - 3306
     environment:
@@ -34,7 +36,9 @@ services:
       - database
     ports:
       - "80:80"
-      - "9123:9123"
+      # - "9123:9123"
+    expose:
+      - 9123
     volumes:
       - ./docker/php.ini:/usr/local/etc/php/conf.d/user-defaults.ini:ro
       - ./docker/logs/xdebug.log:/usr/local/etc/php/xdebug.log

@@ -10,8 +10,8 @@
 !docker/*
 
 # Logs
-!logs/
-!logs/*
+!docker/logs/
+!docker/logs/*
 
 # Main folder settings files
 !.env.example
